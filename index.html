@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LINKed Level Up: Marketing Edition</title>
+<style>
+  body {
+    font-family: "Poppins", sans-serif;
+    background: linear-gradient(180deg, #0077b5 0%, #0a66c2 50%, #1e90ff 100%);
+    margin: 0;
+    color: #fff;
+  }
+
+  .hidden { display: none; }
+
+  .app-container {
+    max-width: 420px;
+    margin: 40px auto;
+    background: #ffffff15;
+    border-radius: 20px;
+    padding: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+
+  h1 { text-align: center; margin-bottom: 15px; }
+
+  /* Welcome screen */
+  #welcome {
+    text-align: center;
+  }
+
+  #startBtn {
+    background: #00bfff;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    color: #fff;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  #startBtn:hover { background: #0099cc; }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    justify-content: space-around;
+    background: #ffffff20;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    padding: 6px;
+  }
+
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 0;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: 0.3s;
+    font-size: 0.9rem;
+  }
+
+  .tab.active { background: #00bfff; }
+
+  .section { margin-bottom: 20px; }
+
+  /* Profile */
+  .profile { display: flex; align-items: center; gap: 10px; }
+  .avatar {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#00aaff,#80d0ff);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 1.3rem;
+  }
+
+  .progress-bar { background: #ffffff30; border-radius: 20px; height: 10px; overflow: hidden; margin-top: 6px; }
+  .progress { height: 100%; width: 40%; background: linear-gradient(90deg,#00c6ff,#0072ff); transition: width 0.4s; }
+
+  /* Buttons */
+  button {
+    background: #00bfff; color: #fff; border: none;
+    border-radius: 10px; padding: 8px 14px; font-weight: bold; cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover { background: #0099cc; }
+
+  /* Challenge cards */
+  .challenge-card {
+    background: #ffffff20; border-radius: 12px; padding: 10px; margin-top: 8px;
+  }
+
+  .leaderboard-item {
+    display: flex; justify-content: space-between;
+    background: #ffffff15; border-radius: 10px; padding: 6px 10px; margin-top: 5px;
+  }
+
+  /* Recognition */
+  .recognition {
+    background: #ffffff15; padding: 10px; border-radius: 10px; margin-bottom: 8px;
+  }
+
+  /* Inputs */
+  input[type="text"] {
+    width: calc(100% - 20px);
+    padding: 8px;
+    border: none;
+    border-radius: 10px;
+    margin: 6px 0;
+  }
+
+  /* Popup */
+  .popup {
+    display: none;
+    text-align: center;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 8px;
+    animation: fadeIn 0.6s;
+  }
+
+  /* Competencies */
+  .skill {
+    margin: 10px 0;
+  }
+  .skill label {
+    display: block;
+    margin-bottom: 5px;
+  }
+  .skill input[type="range"] {
+    width: 100%;
+  }
+
+  @keyframes fadeIn {
+    from {opacity:0; transform:scale(0.9);}
+    to {opacity:1; transform:scale(1);}
+  }
+</style>
+</head>
+
+<body>
+  <!-- WELCOME PAGE -->
+  <div id="welcome" class="app-container">
+    <h1>LINKed Level Up</h1>
+    <p>Turn your marketing career into a game!<br>
+       Track goals, earn badges, and compete with peers.</p>
+    <button id="startBtn">Start Level Up 🚀</button>
+  </div>
+
+  <!-- MAIN APP -->
+  <div id="app" class="app-container hidden">
+    <h1>Marketing Edition</h1>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab active" data-tab="dashboard">🏠 Dashboard</div>
+      <div class="tab" data-tab="challenges">🔥 Challenges</div>
+      <div class="tab" data-tab="leaderboard">🏆 Leaderboard</div>
+      <div class="tab" data-tab="competencies">💡 Competencies</div>
+      <div class="tab" data-tab="wall">💬 Wall</div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="tab-content">
+      <div class="profile">
+        <div class="avatar">LM</div>
+        <div class="profile-info">
+          <strong>Luis M.</strong>
+          <div class="level">Level: Strategic Thinker</div>
+          <div class="progress-bar"><div class="progress" id="progressBar"></div></div>
+        </div>
+      </div>
+      <div class="section">
+        <p><strong>Total Points:</strong> <span id="score">1250</span></p>
+      </div>
+
+      <h2>Company Goals</h2>
+      <div id="companyGoals"></div>
+      <div class="popup" id="popup">🎉 Goal completed! +100 pts</div>
+    </div>
+
+    <!-- CHALLENGES -->
+    <div id="challenges" class="tab-content hidden">
+      <h2>Active Challenges</h2>
+      <div id="challengeList"></div>
+
+      <h3>Add New Challenge</h3>
+      <input type="text" id="newChallenge" placeholder="e.g. Increase engagement by 10%">
+      <button id="addChallenge">Add Challenge ➕</button>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div id="leaderboard" class="tab-content hidden">
+      <h2>Leaderboard</h2>
+      <div id="leaderList">
+        <div class="leaderboard-item"><span>1. Ana P.</span><span>1450 pts</span></div>
+        <div class="leaderboard-item"><span>2. Luis M.</span><span id="scoreBoard">1250 pts</span></div>
+        <div class="leaderboard-item"><span>3. Marco T.</span><span>1200 pts</span></div>
+      </div>
+      <div class="section">
+        <p>🔍 <strong>Average score</strong> across users: <span id="avgScore">1300</span></p>
+        <button id="refreshAvg">Refresh Average</button>
+      </div>
+    </div>
+
+    <!-- COMPETENCIES -->
+    <div id="competencies" class="tab-content hidden">
+      <h2>Professional Competencies</h2>
+      <div class="skill">
+        <label>Strategic Thinking</label>
+        <input type="range" min="1" max="10" value="7" id="stratRange">
+      </div>
+      <div class="skill">
+        <label>Communication Skills</label>
+        <input type="range" min="1" max="10" value="8" id="commRange">
+      </div>
+      <div class="skill">
+        <label>Innovation & Creativity</label>
+        <input type="range" min="1" max="10" value="6" id="innovRange">
+      </div>
+      <div class="skill">
+        <label>Team Leadership</label>
+        <input type="range" min="1" max="10" value="7" id="teamRange">
+      </div>
+      <div class="section">
+        <button id="checkAvgSkills">Check Average Skill Level 📊</button>
+        <p id="skillAvg"></p>
+      </div>
+    </div>
+
+    <!-- WALL -->
+    <div id="wall" class="tab-content hidden">
+      <h2>Recognition Wall</h2>
+      <div id="wallPosts">
+        <div class="recognition"><strong>Ana P.</strong> celebrated <strong>Luis M.</strong> for leading a product launch! 👏🔥</div>
+      </div>
+      <input type="text" id="newPost" placeholder="Write a new recognition...">
+      <button id="addPost">Post 💬</button>
+    </div>
+  </div>
+
+<script>
+  // Elements
+  const startBtn = document.getElementById("startBtn");
+  const welcome = document.getElementById("welcome");
+  const app = document.getElementById("app");
+
+  const tabs = document.querySelectorAll(".tab");
+  const contents = document.querySelectorAll(".tab-content");
+
+  const progressBar = document.getElementById("progressBar");
+  const score = document.getElementById("score");
+  const scoreBoard = document.getElementById("scoreBoard");
+  const popup = document.getElementById("popup");
+
+  const companyGoals = document.getElementById("companyGoals");
+  const challengeList = document.getElementById("challengeList");
+  const addChallengeBtn = document.getElementById("addChallenge");
+  const newChallengeInput = document.getElementById("newChallenge");
+
+  const wallPosts = document.getElementById("wallPosts");
+  const newPost = document.getElementById("newPost");
+  const addPostBtn = document.getElementById("addPost");
+
+  const refreshAvg = document.getElementById("refreshAvg");
+  const avgScore = document.getElementById("avgScore");
+
+  const checkAvgSkills = document.getElementById("checkAvgSkills");
+  const skillAvg = document.getElementById("skillAvg");
+
+  // Variables
+  let progress = 40;
+  let points = 1250;
+
+  // Company preset goals
+  const presetGoals = [
+    "Launch Q4 Marketing Campaign",
+    "Reach +10% Engagement on LinkedIn",
+    "Lead a Team Training Session",
+    "Present a Brand Strategy Pitch",
+    "Implement New Customer Feedback Tool"
+  ];
+
+  presetGoals.forEach(goal => {
+    const div = document.createElement("div");
+    div.classList.add("challenge-card");
+    div.innerHTML = `<strong>${goal}</strong> <button class="doneBtn">Mark Done ✅</button>`;
+    companyGoals.appendChild(div);
+  });
+
+  // Start app
+  startBtn.addEventListener("click", () => {
+    welcome.classList.add("hidden");
+    app.classList.remove("hidden");
+  });
+
+  // Tab switching
+  tabs.forEach(tab => {
+    tab.addEventListener("click", () => {
+      tabs.forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+      const target = tab.dataset.tab;
+      contents.forEach(c => c.classList.add("hidden"));
+      document.getElementById(target).classList.remove("hidden");
+    });
+  });
+
+  // Mark company goals as done
+  companyGoals.addEventListener("click", e => {
+    if (e.target.classList.contains("doneBtn")) {
+      e.target.parentElement.style.textDecoration = "line-through";
+      e.target.disabled = true;
+      updateProgress(10, 100);
+    }
+  });
+
+  // Add new challenge
+  addChallengeBtn.addEventListener("click", () => {
+    const text = newChallengeInput.value.trim();
+    if (text) {
+      const div = document.createElement("div");
+      div.classList.add("challenge-card");
+      div.innerHTML = `<strong>${text}</strong> <button class="doneBtn">Mark Done ✅</button>`;
+      challengeList.appendChild(div);
+      newChallengeInput.value = "";
+    }
+  });
+
+  challengeList.addEventListener("click", e => {
+    if (e.target.classList.contains("doneBtn")) {
+      e.target.parentElement.style.textDecoration = "line-through";
+      e.target.disabled = true;
+      updateProgress(10, 100);
+    }
+  });
+
+  // Update progress and score
+  function updateProgress(pInc, ptsInc) {
+    progress = Math.min(100, progress + pInc);
+    points += ptsInc;
+    progressBar.style.width = progress + "%";
+    score.textContent = points;
+    scoreBoard.textContent = points + " pts";
+    popup.style.display = "block";
+    setTimeout(() => popup.style.display = "none", 2000);
+  }
+
+  // Recognition Wall posts
+  addPostBtn.addEventListener("click", () => {
+    const text = newPost.value.trim();
+    if (text) {
+      const div = document.createElement("div");
+      div.classList.add("recognition");
+      div.innerHTML = `<strong>Luis M.</strong>: ${text}`;
+      wallPosts.prepend(div);
+      newPost.value = "";
+    }
+  });
+
+  // Refresh Average
+  refreshAvg.addEventListener("click", () => {
+    const randomAvg = 1200 + Math.floor(Math.random() * 400);
+    avgScore.textContent = randomAvg;
+  });
+
+  // Competencies Average
+  checkAvgSkills.addEventListener("click", () => {
+    const strat = parseInt(document.getElementById("stratRange").value);
+    const comm = parseInt(document.getElementById("commRange").value);
+    const innov = parseInt(document.getElementById("innovRange").value);
+    const team = parseInt(document.getElementById("teamRange").value);
+    const avg = ((strat + comm + innov + team) / 4).toFixed(1);
+    skillAvg.textContent = `Your average competency level: ${avg}/10`;
+  });
+</script>
+</body>
+</html>
